@@ -5,7 +5,8 @@ import TerminalPanel from './TerminalPanel';
 import TeamModeSwitch from './TeamModeSwitch';
 import ToolsSidebar from './ToolsSidebar';
 import { Button } from '@/components/ui/button';
-import { History, Star, Settings, Activity } from 'lucide-react';
+import { History, Star, Settings, Activity, Network, Database } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface TerminalEntry {
   id: string;
@@ -23,63 +24,84 @@ interface Tool {
 }
 
 const CyberDashboard: React.FC = () => {
+  const { theme } = useTheme();
   const [terminalEntries, setTerminalEntries] = useState<TerminalEntry[]>([]);
   const [isTerminalFullscreen, setIsTerminalFullscreen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [networkHosts, setNetworkHosts] = useState<any[]>([]);
 
-  // Mock AI translation function
-  const translateCommand = async (input: string): Promise<string> => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Simple command mapping for demo
-    const commandMap: Record<string, string> = {
-      'scan ports': 'nmap -sS',
-      'scan port 443': 'nmap -p 443',
-      'scan port 22': 'nmap -p 22', 
-      'check network': 'netstat -tulpn',
-      'monitor traffic': 'tcpdump -i',
-      'brute force ssh': 'hydra -l root -P passwords.txt ssh://',
-      'sql injection': 'sqlmap -u',
-      'directory scan': 'gobuster dir -u',
-      'web scan': 'nikto -h'
-    };
-
-    const lowerInput = input.toLowerCase();
-    for (const [key, command] of Object.entries(commandMap)) {
-      if (lowerInput.includes(key)) {
-        // Extract target if mentioned
-        const ipMatch = input.match(/\b(?:\d{1,3}\.){3}\d{1,3}\b/);
-        const target = ipMatch ? ` ${ipMatch[0]}` : ' <target>';
-        return `${command}${target}`;
+  // Real API integration with backend
+  const translateCommand = async (input: string): Promise<{ command: string, output: string[], type: 'success' | 'error' | 'info' }> => {
+    try {
+      const response = await fetch('http://localhost:8000/api/translate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          input: input,
+          mode: theme === 'attack' ? 'attack' : theme === 'defense' ? 'defense' : theme === 'ops' ? 'ops' : 'matrix'
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+      
+      const data = await response.json();
+      return {
+        command: data.command,
+        output: data.output,
+        type: data.type as 'success' | 'error' | 'info'
+      };
+    } catch (error) {
+      console.error('Backend API error:', error);
+      // Fallback to mock behavior when backend is unavailable
+      return {
+        command: `# Backend unavailable - mock: ${input}`,
+        output: [
+          'Backend connection failed. Showing mock response.',
+          'To enable real Linux integration:',
+          '1. Start the backend: cd backend && python main.py',
+          '2. Install required tools: nmap, hydra, sqlmap, etc.',
+          '3. Ensure proper permissions for tool execution'
+        ],
+        type: 'error' as const
+      };
     }
-    
-    return `# AI couldn't translate: "${input}" - try being more specific`;
   };
 
   const handleCommand = async (input: string) => {
     setIsProcessing(true);
     
     try {
-      const translatedCommand = await translateCommand(input);
+      const result = await translateCommand(input);
       const timestamp = new Date().toLocaleTimeString();
-      
-      // Simulate command execution
-      const mockOutput = generateMockOutput(translatedCommand);
       
       const newEntry: TerminalEntry = {
         id: Date.now().toString(),
         timestamp,
         input,
-        command: translatedCommand,
-        output: mockOutput.output,
-        type: mockOutput.type
+        command: result.command,
+        output: result.output,
+        type: result.type
       };
       
       setTerminalEntries(prev => [...prev, newEntry]);
     } catch (error) {
       console.error('Command processing error:', error);
+      
+      // Add error entry
+      const errorEntry: TerminalEntry = {
+        id: Date.now().toString(),
+        timestamp: new Date().toLocaleTimeString(),
+        input,
+        command: '# Error processing command',
+        output: [`Error: ${error instanceof Error ? error.message : 'Unknown error'}`],
+        type: 'error'
+      };
+      
+      setTerminalEntries(prev => [...prev, errorEntry]);
     } finally {
       setIsProcessing(false);
     }
@@ -137,15 +159,30 @@ const CyberDashboard: React.FC = () => {
     // Auto-fill command input with tool usage example
     const examples: Record<string, string> = {
       'nmap': 'scan all ports on 192.168.1.1',
-      'hydra': 'brute force SSH on 192.168.1.10',
+      'hydra': 'brute force SSH on 192.168.1.10', 
       'sqlmap': 'test SQL injection on http://target.com/login',
       'gobuster': 'scan directories on http://target.com',
       'tcpdump': 'monitor traffic on eth0',
-      'netstat': 'check network connections'
+      'netstat': 'check network connections',
+      'nikto': 'scan web server at http://192.168.1.1',
+      'dirb': 'scan directories on http://target.com'
     };
     
     const example = examples[tool.command] || `use ${tool.name} on target`;
     handleCommand(example);
+  };
+
+  const discoverNetwork = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/network/discover');
+      if (response.ok) {
+        const data = await response.json();
+        setNetworkHosts(data.hosts || []);
+      }
+    } catch (error) {
+      console.error('Network discovery failed:', error);
+      setNetworkHosts([]);
+    }
   };
 
   return (
@@ -187,9 +224,18 @@ const CyberDashboard: React.FC = () => {
             <Star className="w-4 h-4 mr-2" />
             Favorites
           </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="glass border-cyber hover-glow"
+            onClick={discoverNetwork}
+          >
+            <Network className="w-4 h-4 mr-2" />
+            Network
+          </Button>
           <Button variant="outline" size="sm" className="glass border-cyber hover-glow">
             <Settings className="w-4 h-4 mr-2" />
-            Settings
+            Config
           </Button>
         </motion.div>
       </motion.div>
@@ -279,6 +325,32 @@ const CyberDashboard: React.FC = () => {
               </motion.div>
             </div>
           </div>
+          
+          {/* Network Discovery Panel */}
+          {networkHosts.length > 0 && (
+            <div className="glass-intense rounded-xl p-6 mt-6">
+              <h3 className="text-lg font-semibold text-glow mb-4 flex items-center gap-2">
+                <Database className="w-5 h-5" />
+                Network Hosts ({networkHosts.length})
+              </h3>
+              <div className="space-y-2 max-h-40 overflow-y-auto">
+                {networkHosts.map((host, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="flex justify-between items-center text-sm p-2 glass rounded-lg"
+                  >
+                    <span className="text-cyber-primary font-mono">{host.ip}</span>
+                    {host.vendor && (
+                      <span className="text-muted-foreground text-xs">{host.vendor}</span>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          )}
         </motion.div>
       </div>
     </motion.div>

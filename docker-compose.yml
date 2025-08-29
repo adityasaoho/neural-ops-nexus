@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # Backend API
+  mini-heart-backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./backend/data:/app/data
+      - ./backend/config:/app/config
+    environment:
+      - PYTHONPATH=/app
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+    networks:
+      - mini-heart-net
+    privileged: true  # Required for network tools
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    devices:
+      - /dev/net/tun
+    restart: unless-stopped
+
+  # Frontend (Development)
+  mini-heart-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    networks:
+      - mini-heart-net
+    depends_on:
+      - mini-heart-backend
+
+  # Database (Optional - SQLite is used by default)
+  mini-heart-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: miniheartx
+      POSTGRES_USER: miniheartx
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-miniheartx123}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - mini-heart-net
+    ports:
+      - "5432:5432"
+
+networks:
+  mini-heart-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  postgres_data:

@@ -1,0 +1,220 @@
+{
+  "recon": {
+    "nmap": {
+      "name": "Nmap Network Scanner",
+      "command": "nmap",
+      "args": "-sS -O -A",
+      "category": "recon",
+      "description": "Network discovery and security auditing",
+      "examples": [
+        "nmap -sn 192.168.1.0/24",
+        "nmap -p 22,80,443 192.168.1.1",
+        "nmap -sV --script vuln 192.168.1.1"
+      ]
+    },
+    "nikto": {
+      "name": "Nikto Web Scanner",
+      "command": "nikto",
+      "args": "-h",
+      "category": "recon", 
+      "description": "Web server scanner for vulnerabilities",
+      "examples": [
+        "nikto -h http://192.168.1.1",
+        "nikto -h https://target.com -ssl"
+      ]
+    },
+    "gobuster": {
+      "name": "Gobuster Directory Scanner",
+      "command": "gobuster",
+      "args": "dir -u",
+      "category": "recon",
+      "description": "Directory/file scanner",
+      "examples": [
+        "gobuster dir -u http://192.168.1.1 -w /usr/share/wordlists/dirb/common.txt"
+      ]
+    },
+    "dirb": {
+      "name": "DIRB Web Content Scanner", 
+      "command": "dirb",
+      "args": "",
+      "category": "recon",
+      "description": "Web content scanner",
+      "examples": [
+        "dirb http://192.168.1.1"
+      ]
+    }
+  },
+  "exploit": {
+    "hydra": {
+      "name": "Hydra Brute Force Tool",
+      "command": "hydra",
+      "args": "-l root -P /usr/share/wordlists/rockyou.txt",
+      "category": "exploit",
+      "description": "Login cracker supporting various protocols",
+      "examples": [
+        "hydra -l admin -P passwords.txt ssh://192.168.1.10",
+        "hydra -L users.txt -P passwords.txt http-post-form://192.168.1.1/login.php"
+      ]
+    },
+    "sqlmap": {
+      "name": "SQLMap SQL Injection Tool",
+      "command": "sqlmap",
+      "args": "-u --batch",
+      "category": "exploit",
+      "description": "Automatic SQL injection exploitation",
+      "examples": [
+        "sqlmap -u 'http://192.168.1.1/page.php?id=1' --batch",
+        "sqlmap -u 'http://target.com/login' --data='user=admin&pass=test'"
+      ]
+    },
+    "msfconsole": {
+      "name": "Metasploit Framework",
+      "command": "msfconsole",
+      "args": "-q -x",
+      "category": "exploit",
+      "description": "Penetration testing framework",
+      "examples": [
+        "msfconsole -q -x 'use exploit/multi/handler; set payload windows/meterpreter/reverse_tcp; run'"
+      ]
+    },
+    "searchsploit": {
+      "name": "Exploit Database Search",
+      "command": "searchsploit",
+      "args": "",
+      "category": "exploit", 
+      "description": "Search exploit database",
+      "examples": [
+        "searchsploit apache 2.4",
+        "searchsploit -m 12345"
+      ]
+    }
+  },
+  "defense": {
+    "netstat": {
+      "name": "Network Statistics",
+      "command": "netstat",
+      "args": "-tulpn",
+      "category": "defense",
+      "description": "Display network connections and statistics",
+      "examples": [
+        "netstat -tulpn",
+        "netstat -rn"
+      ]
+    },
+    "tcpdump": {
+      "name": "Tcpdump Packet Analyzer", 
+      "command": "tcpdump",
+      "args": "-i any -n",
+      "category": "defense",
+      "description": "Command-line packet analyzer",
+      "examples": [
+        "tcpdump -i eth0 -n",
+        "tcpdump -i any port 80",
+        "tcpdump -i eth0 host 192.168.1.1"
+      ]
+    },
+    "ss": {
+      "name": "Socket Statistics",
+      "command": "ss",
+      "args": "-tulpn",
+      "category": "defense",
+      "description": "Modern replacement for netstat",
+      "examples": [
+        "ss -tulpn",
+        "ss -t state established"
+      ]
+    },
+    "iptables": {
+      "name": "Netfilter Iptables",
+      "command": "iptables",
+      "args": "-L -n",
+      "category": "defense",
+      "description": "Firewall administration",
+      "examples": [
+        "iptables -L -n",
+        "iptables -A INPUT -p tcp --dport 22 -j ACCEPT"
+      ]
+    },
+    "fail2ban-client": {
+      "name": "Fail2ban Client",
+      "command": "fail2ban-client",
+      "args": "status",
+      "category": "defense",
+      "description": "Intrusion prevention system",
+      "examples": [
+        "fail2ban-client status",
+        "fail2ban-client status sshd"
+      ]
+    }
+  },
+  "analysis": {
+    "wireshark": {
+      "name": "Wireshark",
+      "command": "tshark",
+      "args": "-i any -c 10",
+      "category": "analysis",
+      "description": "Network protocol analyzer (CLI version)",
+      "examples": [
+        "tshark -i eth0 -c 100",
+        "tshark -r capture.pcap -Y http"
+      ]
+    },
+    "volatility": {
+      "name": "Volatility Memory Analysis",
+      "command": "volatility",
+      "args": "-f",
+      "category": "analysis", 
+      "description": "Memory forensics framework",
+      "examples": [
+        "volatility -f memory.dump imageinfo",
+        "volatility -f memory.dump --profile=Win7SP1x64 pslist"
+      ]
+    },
+    "binwalk": {
+      "name": "Binwalk Firmware Analysis",
+      "command": "binwalk",
+      "args": "-e",
+      "category": "analysis",
+      "description": "Firmware analysis tool",
+      "examples": [
+        "binwalk firmware.bin",
+        "binwalk -e firmware.bin"
+      ]
+    }
+  },
+  "osint": {
+    "whois": {
+      "name": "Whois Domain Lookup",
+      "command": "whois",
+      "args": "",
+      "category": "osint",
+      "description": "Domain registration information",
+      "examples": [
+        "whois google.com",
+        "whois 8.8.8.8"
+      ]
+    },
+    "dig": {
+      "name": "DNS Lookup Tool",
+      "command": "dig",
+      "args": "",
+      "category": "osint",
+      "description": "DNS information gathering",
+      "examples": [
+        "dig google.com",
+        "dig @8.8.8.8 google.com MX"
+      ]
+    },
+    "nslookup": {
+      "name": "Name Server Lookup",
+      "command": "nslookup",
+      "args": "",
+      "category": "osint",
+      "description": "DNS server query tool",
+      "examples": [
+        "nslookup google.com",
+        "nslookup 8.8.8.8"
+      ]
+    }
+  }
+}
