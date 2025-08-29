@@ -1,105 +1,252 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Mini Heart X - Cyber Operations Design System */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Dark cyber base */
+    --background: 215 25% 4%;
+    --foreground: 220 15% 95%;
+    
+    /* Glass panels */
+    --card: 220 25% 8%;
+    --card-foreground: 220 15% 95%;
+    
+    /* Matrix Green Theme */
+    --matrix-primary: 120 100% 50%;
+    --matrix-secondary: 120 80% 30%;
+    --matrix-glow: 120 100% 60%;
+    --matrix-bg: 120 100% 5%;
+    
+    /* Attack Red Theme */
+    --attack-primary: 0 100% 50%;
+    --attack-secondary: 15 100% 50%;
+    --attack-glow: 0 100% 60%;
+    --attack-bg: 0 100% 5%;
+    
+    /* Defense Blue Theme */
+    --defense-primary: 200 100% 50%;
+    --defense-secondary: 180 100% 50%;
+    --defense-glow: 200 100% 60%;
+    --defense-bg: 200 100% 5%;
+    
+    /* Purple Ops Theme */
+    --ops-primary: 280 100% 50%;
+    --ops-secondary: 320 100% 50%;
+    --ops-glow: 280 100% 60%;
+    --ops-bg: 280 100% 5%;
+    
+    /* Active theme (default to matrix) */
+    --theme-primary: var(--matrix-primary);
+    --theme-secondary: var(--matrix-secondary);
+    --theme-glow: var(--matrix-glow);
+    --theme-bg: var(--matrix-bg);
+    
+    /* Glass effects */
+    --glass-bg: 220 25% 15%;
+    --glass-border: 220 15% 25%;
+    --glass-shadow: 0 0% 0%;
+    
+    /* Standard design tokens */
+    --primary: var(--theme-primary);
+    --primary-foreground: 0 0% 0%;
+    --secondary: var(--glass-bg);
+    --secondary-foreground: var(--foreground);
+    --muted: 220 15% 20%;
+    --muted-foreground: 220 10% 60%;
+    --accent: var(--theme-secondary);
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: var(--glass-border);
+    --input: var(--glass-bg);
+    --ring: var(--theme-glow);
+    --radius: 0.75rem;
+    
+    /* Gradients */
+    --gradient-cyber: linear-gradient(135deg, hsl(var(--theme-primary) / 0.8), hsl(var(--theme-secondary) / 0.8));
+    --gradient-glass: linear-gradient(135deg, hsl(var(--glass-bg) / 0.4), hsl(var(--glass-bg) / 0.1));
+    --gradient-glow: radial-gradient(circle at center, hsl(var(--theme-glow) / 0.3), transparent 70%);
+    
+    /* Shadows */
+    --shadow-glow: 0 0 20px hsl(var(--theme-glow) / 0.5);
+    --shadow-cyber: 0 8px 32px hsl(var(--theme-primary) / 0.3);
+    --shadow-glass: 0 8px 32px hsl(0 0% 0% / 0.4);
+    
+    /* Terminal */
+    --terminal-bg: 220 30% 6%;
+    --terminal-foreground: var(--theme-primary);
+    --terminal-cursor: var(--theme-glow);
+    
+    /* Animations */
+    --transition-cyber: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-glow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
+}
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+/* Theme variants */
+[data-theme="matrix"] {
+  --theme-primary: var(--matrix-primary);
+  --theme-secondary: var(--matrix-secondary);
+  --theme-glow: var(--matrix-glow);
+  --theme-bg: var(--matrix-bg);
+}
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+[data-theme="attack"] {
+  --theme-primary: var(--attack-primary);
+  --theme-secondary: var(--attack-secondary);
+  --theme-glow: var(--attack-glow);
+  --theme-bg: var(--attack-bg);
+}
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+[data-theme="defense"] {
+  --theme-primary: var(--defense-primary);
+  --theme-secondary: var(--defense-secondary);
+  --theme-glow: var(--defense-glow);
+  --theme-bg: var(--defense-bg);
+}
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
+[data-theme="ops"] {
+  --theme-primary: var(--ops-primary);
+  --theme-secondary: var(--ops-secondary);
+  --theme-glow: var(--ops-glow);
+  --theme-bg: var(--ops-bg);
 }
 
 @layer base {
   * {
     @apply border-border;
   }
-
+  
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+    background-image: 
+      url('/src/assets/cyber-bg.jpg'),
+      radial-gradient(circle at 20% 80%, hsl(var(--theme-bg) / 0.4) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, hsl(var(--theme-bg) / 0.4) 0%, transparent 50%);
+    background-size: cover, 100% 100%, 100% 100%;
+    background-position: center, center, center;
+    background-attachment: fixed;
+    background-blend-mode: overlay, normal, normal;
   }
+  
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  /* Glass morphism base */
+  .glass {
+    @apply backdrop-blur-xl border border-white/10;
+    background: hsl(var(--glass-bg) / 0.2);
+    box-shadow: var(--shadow-glass);
+  }
+  
+  .glass-intense {
+    @apply backdrop-blur-2xl border border-white/20;
+    background: hsl(var(--glass-bg) / 0.4);
+    box-shadow: var(--shadow-glass);
+  }
+  
+  /* Cyber glow effects */
+  .glow {
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .glow-intense {
+    box-shadow: var(--shadow-glow), var(--shadow-cyber);
+  }
+  
+  /* Cyber gradients */
+  .bg-cyber-gradient {
+    background: var(--gradient-cyber);
+  }
+  
+  .bg-glass-gradient {
+    background: var(--gradient-glass);
+  }
+  
+  /* Terminal styling */
+  .terminal {
+    @apply font-mono;
+    background: hsl(var(--terminal-bg) / 0.8);
+    color: hsl(var(--terminal-foreground));
+    box-shadow: 
+      inset 0 0 20px hsl(var(--theme-glow) / 0.1),
+      var(--shadow-glass);
+  }
+  
+  /* Cyber borders */
+  .border-cyber {
+    border-color: hsl(var(--theme-primary) / 0.3);
+  }
+  
+  .border-glow {
+    border-color: hsl(var(--theme-glow) / 0.5);
+    box-shadow: 0 0 10px hsl(var(--theme-glow) / 0.3);
+  }
+  
+  /* Interactive states */
+  .hover-glow {
+    transition: var(--transition-glow);
+  }
+  
+  .hover-glow:hover {
+    box-shadow: var(--shadow-glow);
+    border-color: hsl(var(--theme-glow) / 0.8);
+  }
+  
+  /* Animations */
+  .animate-pulse-glow {
+    animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .animate-typing {
+    animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+  }
+}
+
+@layer utilities {
+  .text-cyber {
+    color: hsl(var(--theme-primary));
+  }
+  
+  .text-glow {
+    color: hsl(var(--theme-glow));
+    text-shadow: 0 0 10px hsl(var(--theme-glow) / 0.5);
+  }
+  
+  .bg-cyber {
+    background-color: hsl(var(--theme-primary));
+  }
+  
+  .bg-cyber-soft {
+    background-color: hsl(var(--theme-primary) / 0.1);
+  }
+}
+
+/* Keyframes */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px hsl(var(--theme-glow) / 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px hsl(var(--theme-glow) / 0.8), 0 0 30px hsl(var(--theme-glow) / 0.4);
+  }
+}
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: hsl(var(--terminal-cursor)) }
 }
