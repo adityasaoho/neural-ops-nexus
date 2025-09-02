@@ -1,4 +1,4 @@
-# 🎯 Mini Heart X
+#  Mini Heart X
 
 **AI-Powered Cyber Operations Dashboard with Real Linux Integration**
 
